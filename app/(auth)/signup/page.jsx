@@ -50,10 +50,10 @@ export default function ProfileForm() {
 
   const session = useSession();
   console.log(session)
-  // if (session.status === "authenticated") {
-  //   router.push("/");
-  // }
-  const [emailValidation, setValidation] = useState("");
+  if (session.status === "authenticated") {
+    router.push("/");
+  }
+  const [emailValidation, setEmailValidation] = useState("");
   const [loading, setLoading] = useState(false);
   const [userRole, setUserRole]= useState('student')
 
@@ -68,24 +68,34 @@ export default function ProfileForm() {
   });
 
   async function onSubmit(values) {
+    setEmailValidation("");
     const { username, email, password } = values;
 
     setLoading(true);
-    const response = await signIn("credentials", {
-      email,
-      password,
-      username,
-      role:userRole,
-      redirect: false,
+    const response = await fetch("/api/signup", {
+      method: "POST",
+      body: JSON.stringify({
+        username,
+        email,
+        password,
+        role:userRole,
+      }),
+      headers: {
+        "Content-type": "application/json",
+      },
     });
+
+    if (response.ok) {
+      await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+      toast.success("Signup successful!");
+    }
+    const data = await response.json();
     setLoading(false);
-    console.log(response);
-    if (response?.ok) {
-      toast.success("Login successful!");
-    }
-    if (response?.error) {
-      setValidation(response.error);
-    }
+    setEmailValidation(data.message);
   }
   return (
     <>
@@ -177,9 +187,7 @@ export default function ProfileForm() {
                     />
                   </FormControl>
                   <FormMessage />
-                  <p className="text-sm text-red-400 font-semibold">
-                    {emailValidation}
-                  </p>
+                 
                 </FormItem>
               )}
             />
@@ -194,6 +202,9 @@ export default function ProfileForm() {
                         <SelectItem value="student">Student</SelectItem>
                       </SelectContent>
                     </Select>
+             <p className="text-sm text-red-500 mt-4 font-semibold">
+                    {emailValidation}
+                  </p>
             <div className="flex flex-col w-full items-center justify-center">
               <Button
                 type="submit"

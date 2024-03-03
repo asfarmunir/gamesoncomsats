@@ -22,9 +22,9 @@ module.exports = {
       },
       colors: {
         primary: {
-          500: "#624CF5",
+          500: "#1d3884",
           50: " #F6F8FD",
-          DEFAULT: "#624CF5",
+          DEFAULT: "#1d3885",
           foreground: "hsl(var(--primary-foreground))",
         },
         coral: {

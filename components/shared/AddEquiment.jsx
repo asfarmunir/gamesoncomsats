@@ -1,14 +1,11 @@
-"use client";
-
-import Image from "next/image";
+"use client"
+import React from 'react'
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
-import { FaArrowLeft } from "react-icons/fa6";
-
 import {
   Form,
   FormControl,
@@ -21,75 +18,61 @@ import {
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { ColorRing } from "react-loader-spinner";
-import Link from "next/link";
-import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { FcGoogle } from "react-icons/fc";
+import { addEquipment } from '@/lib/database/actions/equipment.actions';
 
-const formSchema = z.object({
-  email: z.string().email({
-    message: "Please enter a valid email.",
-  }),
-  password: z.string().min(8, {
-    message: "Password must be at least 8 characters.",
-  }),
-});
-
-export default function ProfileForm() {
-  // ...
-
-  const router = useRouter();
-
-  const session = useSession();
-
-  if (session.status === "authenticated") {
-    router.push("/");
-  }
-
+const AddEquiment = () => {
+  
   const [validation, setValidation] = useState("");
   const [loading, setLoading] = useState(false);
-  const form = useForm({
+ 
+  const router = useRouter();
+const formSchema = z.object({
+  name: z.string().min(3,
+     "Please add a name",
+  ),
+  sportsType: z.string().min(3,
+    "Please specify the sports type",
+  ),
+  totalQuantity: z.string().min(1,"Add Quantity")
+});
+ const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "asfarma2815@gmail.com",
-      password: "asfarasfar",
+      name:"cricket Bat",
+      totalQuantity: "1",
+      sportsType:"cricket" 
     },
   });
+   async function onSubmit(values) {
+   const res = await toast.promise(addEquipment({...values, availableQuantity:values.totalQuantity}),
+   {
+    success:"Item Added",
+    loading:'Adding Item',
+    error:"Error Adding Item"
+   })
+   console.log(res)
+   if(res.status && res.status === 401)
+   {
+    setValidation("Item Already Added");
+   }
+  else
+  {
+    router.refresh()
+  }
 
-  async function onSubmit(values) {
-    setValidation("");
-
-    const { email, password } = values;
-
-    setLoading(true);
-    const response = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
-    setLoading(false);
-    if (response?.ok) {
-      toast.success("Login successful!");
-    }
-    if (response?.error) {
-      setValidation(response.error);
-    }
   }
   return (
-    <>
-      <div className=" absolute p-8 left-0 top-0">
-        <button className="hover:bg-blue-100 rounded-full p-2">
-          <Link href="/">
-            <FaArrowLeft className="text-primary-500 text-lg " />
-          </Link>
-        </button>
-      </div>
+    <div className='flex flex-col w-full items-center justify-center rounded-lg p-6'>
+    
       <Form {...form}>
         <div
           id="first"
-          className="flex flex-col items-center bg-white shadow-md w-[18rem] sm:w-[24rem]  rounded-xl px-8 pt-6 pb-8 mb-4 space-y-6"
+          className="flex flex-col items-center bg-white shadow-md w-[24rem] sm:w-[24rem]  rounded-xl px-8 pt-6 pb-8 mb-4 space-y-6"
         >
-         
+     <h1 className='text-2xl font-bold'>
+        Add Equipment
+      </h1>
           <Separator />
           <form
             id="container"
@@ -98,15 +81,15 @@ export default function ProfileForm() {
           >
             <FormField
               control={form.control}
-              name="email"
+              name="name"
               render={({ field }) => (
                 <FormItem className="mb-4">
                   <FormLabel className="block text-gray-700 font-bold mb-2">
-                    Email
+                    Gear Name
                   </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Email"
+                      placeholder="equipment"
                       {...field}
                       className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     />
@@ -118,16 +101,36 @@ export default function ProfileForm() {
 
             <FormField
               control={form.control}
-              name="password"
+              name="sportsType"
               render={({ field }) => (
                 <FormItem className="mb-4">
                   <FormLabel className="block text-gray-700 font-bold mb-2">
-                    Password
+                    Sports Type
                   </FormLabel>
                   <FormControl>
                     <Input
-                      type="password"
-                      placeholder="Password"
+                      type="text"
+                      placeholder="cricker"
+                      {...field}
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="totalQuantity"
+              render={({ field }) => (
+                <FormItem className="mb-4">
+                  <FormLabel className="block text-gray-700 font-bold mb-2">
+                    Total Quantity
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="00"
                       {...field}
                       className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     />
@@ -139,10 +142,11 @@ export default function ProfileForm() {
                 </FormItem>
               )}
             />
+        
             <div className="flex flex-col w-full items-center justify-center">
               <Button
                 type="submit"
-                className="bg-primary-500 hover:bg-primary mt-3 text-white font-semibold py-2 px-14 rounded-full  focus:outline-none focus:shadow-outline"
+                className="bg-primary-500 hover:bg-primary mt-3 text-white font-semibold py-2 px-6 rounded-md  focus:outline-none focus:shadow-outline"
               >
                 {loading ? (
                   <ColorRing
@@ -161,23 +165,15 @@ export default function ProfileForm() {
                     ]}
                   />
                 ) : (
-                  <span>Login</span>
+                  <span>Add Item</span>
                 )}
               </Button>
-              <p className="text-xs font-thin mt-2">
-                Already have an account:
-                <Link
-                  className="font-semibold text-primary-500"
-                  href={"/signup"}
-                >
-                  {" "}
-                  Sign up
-                </Link>
-              </p>
             </div>
           </form>
         </div>
       </Form>
-    </>
-  );
+    </div>
+  )
 }
+
+export default AddEquiment

@@ -6,7 +6,7 @@ import User from "@/lib/database/models/user.model";
 export async function POST(req, res) {
   try {
     //checkout req.test() as well for data
-    const { username, email, password } = await req.json();
+    const { username, email, password, role } = await req.json();
     if (!email || !password) {
       return NextResponse.json({ message: "Email and password are required" });
     }
@@ -26,6 +26,7 @@ export async function POST(req, res) {
       username,
       email,
       password: hashedPassword,
+      role,
     });
 
     return NextResponse.json({ message: "user created", user, status: 200 });

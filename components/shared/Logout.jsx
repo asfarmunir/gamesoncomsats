@@ -4,14 +4,9 @@ import { LuLogOut } from 'react-icons/lu'
 import { signOut } from 'next-auth/react'
 import { toast } from 'react-hot-toast' 
 
-const Logout = async () => {
+const Logout = () => {
 
     const logoutUser = async () => {
-    // toast.promise(signOut ,{
-    //     success:"succefully Logged Out",
-    //     loading:"logging Out",
-    //     error:"Error logging out"
-    // })
     await signOut();
 }
   return (

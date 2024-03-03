@@ -1,22 +1,23 @@
-import React from "react";
-
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import { getServerSession } from "next-auth";
+"use client"
+// import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+// import { getServerSession } from "next-auth";
 import Logout from "./Logout";
 import Link from "next/link";
 import Navlinks from "./Navlinks";
+import { useSession } from "next-auth/react";
 
-const Sidebar = async () => {
+const Sidebar = () => {
 
-  const session = await getServerSession(authOptions)
-
+  // const session = await getServerSession(authOptions)
+  const session = useSession();
+  console.log(session);
   return (
     <div>
-      <div className="bg-slate-200 flex  h-screen antialiased text-slate-300 selection:bg-blue-600 selection:text-white">
+      <div className="bg-slate-200 flex   h-screen antialiased text-slate-300 selection:bg-blue-600 selection:text-white">
         {/* SideBar */}
         <div
           id="menu"
-          className="hidden md:block bg-gradient-to-l from-blue-900 to-blue-950 min-h-screen  text-slate-300 w-80  overflow-y-scroll pb-8"
+          className="hidden md:block bg-gradient-to-l from-blue-900 to-blue-950  h-full   text-slate-300 w-80  overflow-y-scroll pb-8"
         >
           <div id="logo" className="mt-6 px-6">
             <h1 className="text-lg md:text-3xl font-bold border-b border-slate-500 pb-2 text-white mb-2">
@@ -28,7 +29,7 @@ const Sidebar = async () => {
           </div>
         
         {
-          session ? ( <div
+          session.status === "authenticated" ? ( <div
             id="profile"
             className="px-6 py-6 bg-indigo-950 mt-2 mb-4 mx-2 rounded-lg"
           >
@@ -44,12 +45,12 @@ const Sidebar = async () => {
               <div className="w-full">
                 <p className="flex items-center justify-between w-full">
                   <span className="text-sm md:text-base font-bold capitalize">
-                  {session.user.name}
+                  {session.data.user.name}
                 </span>
                 <Logout />
                 </p>
                 
-                <span className="text-xs  block text-slate-400 capitalize">{session.user.role}</span>
+                <span className="text-xs  block text-slate-400 capitalize">{session.data.user.role}</span>
               </div>
             </div>
           </div> ) :( <div className="px-6 flex items-center justify-center py-6 bg-indigo-950 mt-2 mb-4 mx-2 rounded-lg">

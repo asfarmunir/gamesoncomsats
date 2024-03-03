@@ -26,7 +26,6 @@ const Navlinks = () => {
   ];
     
   const pathname = usePathname();
-  console.log(pathname)
 
   return (
     <div id="nav" className="w-full px-6">
