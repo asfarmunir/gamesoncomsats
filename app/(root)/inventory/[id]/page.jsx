@@ -45,7 +45,7 @@ const page = async({
   <TableBody>
     {
       equipmentData.booking.map((bookingData,index)=>(
-        <TableRow>
+        <TableRow key={index}>
       <TableCell className="font-medium">{index+1}</TableCell>
       <TableCell>{bookingData.bookerId.username}</TableCell>
       <TableCell>{bookingData.registraionNumber}</TableCell>
