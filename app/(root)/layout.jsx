@@ -2,7 +2,7 @@
 // import Navbar from "@/components/shared/Header";
 
 import Sidebar from "@/components/shared/Sidebar";
-
+import Image from "next/image"
 
 export default function RootLayout({
   children,
@@ -12,7 +12,12 @@ export default function RootLayout({
       {/* <Navbar /> */}
         <Sidebar />
         <main className="flex-1 overflow-y-scroll">
-        <h2 className=" w-full sticky flex p-4 font-serif bg-white shadow items-center justify-center  text-4xl font-bold text-primary">Games On Comsats</h2>
+          <div className="w-full sticky flex p-4 
+         bg-white shadow items-center justify-center  text-3xl
+          font-bold text-primary">
+          <Image src={'/logo.png'} width={70} height={70} alt={'logo'} />
+           <h2 className=" ">GAMES ON COMSATS</h2>
+          </div>
         {children}
         </main>
       {/* <Footer />- */}

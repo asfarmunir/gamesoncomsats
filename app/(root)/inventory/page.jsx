@@ -43,10 +43,10 @@ const page = async () => {
           <div className='flex items-center justify-around gap-4'>
             <div className='flex flex-col gap-1 '>
               <p className='font-light text-sm'>
-                Total Quantity: <span className='font-semibold text-primary'>{item.totalQuantity}</span>
+                Total Qty: <span className='font-semibold text-primary'>{item.totalQuantity}</span>
               </p>
               <p className='font-light text-sm'>
-                Available Quantity: <span className='font-semibold text-primary'>{item.availableQuantity}</span>
+                Available Qty: <span className='font-semibold text-primary'>{item.availableQuantity}</span>
               </p>
             </div>
 

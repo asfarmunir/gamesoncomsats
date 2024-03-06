@@ -3,12 +3,9 @@
 import React from 'react'
 import { MdDashboard } from "react-icons/md";
 import { GiDatabase } from "react-icons/gi";
-import { FaCloud, FaBell } from "react-icons/fa";
-import { TbReportMoney } from "react-icons/tb";
-import { SiSpringsecurity } from "react-icons/si";
-import { IoExtensionPuzzle, IoSettings } from "react-icons/io5";
-import { LuLogOut } from "react-icons/lu";
+import { MdEmojiEvents } from "react-icons/md";
 import { usePathname } from "next/navigation";
+import { BiSolidCricketBall } from "react-icons/bi";
 import Link from "next/link";
 
 
@@ -20,8 +17,14 @@ const Navlinks = () => {
     {
       text: "Events",
       description: "Manage events",
-      icon: <FaCloud />,
+      icon: <MdEmojiEvents />,
       href:"/events"
+    }, 
+    {
+      text: "Playrounds",
+      description: "Book grounds",
+      icon: <BiSolidCricketBall />,
+      href:"/ground"
     }, 
   ];
     
