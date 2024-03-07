@@ -17,12 +17,14 @@ import { Button } from '../ui/button'
 import { createBooking } from '@/lib/database/actions/equipment.actions'
 import { toast } from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
+import { createGroundBooking } from '@/lib/database/actions/ground.actions'
 
-const BookEquipment = ({ bookerId, itemId }) => {
+const BookGround = ({ bookerId, groundId, slotNumber }) => {
   const idRef = useRef("")
   const phoneRef = useRef("")
   const [validation, setValidation] = useState(false)
   const router = useRouter();
+
   const handleSubmit = async () => {
     if (idRef.current.value === '' || phoneRef.current.value === '') {
       setValidation(true)
@@ -31,13 +33,14 @@ const BookEquipment = ({ bookerId, itemId }) => {
     setValidation(false)
     const bookingData = {
       bookerId,
-      registrationNumber: idRef.current.value,
+      registraionNumber: idRef.current.value,
       phoneNumber: phoneRef.current.value,
     }
-    console.log(bookingData, itemId)
-    const booking = await createBooking(bookingData, itemId)
+    console.log(groundId, slotNumber)
+    console.log(bookingData);
+    const booking = await createGroundBooking(bookingData, groundId, slotNumber)
     if (booking) {
-      toast.success("Item Booked")
+      toast.success("Slot Booked")
     }
     router.refresh();
 
@@ -46,10 +49,10 @@ const BookEquipment = ({ bookerId, itemId }) => {
   return (
     <div>
       <AlertDialog>
-        <AlertDialogTrigger className=' py-2 text-sm mt-2 bg-primary px-4 rounded-md text-white'>Book Item</AlertDialogTrigger>
+        <AlertDialogTrigger className=' py-2 text-sm mt-2 bg-primary px-4 rounded-md text-white'>Book</AlertDialogTrigger>
         <AlertDialogContent className="bg-white">
           <AlertDialogHeader>
-            <AlertDialogTitle>Book Item</AlertDialogTitle>
+            <AlertDialogTitle>Book Playground</AlertDialogTitle>
             <AlertDialogDescription>
               Fill in the required information.
               <Separator className="my-3" />
@@ -88,4 +91,4 @@ const BookEquipment = ({ bookerId, itemId }) => {
   )
 }
 
-export default BookEquipment
+export default BookGround

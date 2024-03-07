@@ -10,7 +10,7 @@ const Sidebar = () => {
 
   // const session = await getServerSession(authOptions)
   const session = useSession();
-  console.log(session);
+  // console.log(session);
   return (
     <div>
       <div className="bg-slate-200 flex   h-screen antialiased text-slate-300 selection:bg-blue-600 selection:text-white">
@@ -21,44 +21,44 @@ const Sidebar = () => {
         >
           <div id="logo" className="mt-6 px-6">
             <h1 className="text-lg md:text-3xl font-bold border-b border-slate-500 pb-2 text-white mb-2">
-             Sports Portal
+              Sports Portal
             </h1>
             <p className="text-slate-300 text-sm">
               Manage your actions and activities
             </p>
           </div>
-        
-        {
-          session.status === "authenticated" ? ( <div
-            id="profile"
-            className="px-6 py-6 bg-indigo-950 mt-2 mb-4 mx-2 rounded-lg"
-          >
-            <p className="text-white">Welcome,</p>
-            <div href="#" className="inline-flex w-full space-x-3 mt-2 items-center">
-              <span>
-                <img
-                  className="rounded-full w-8 h-8"
-                  src="https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=128&q=80"
-                  alt=""
-                />
-              </span>
-              <div className="w-full">
-                <p className="flex items-center justify-between w-full">
-                  <span className="text-sm md:text-base font-bold capitalize">
-                  {session.data.user.name}
+
+          {
+            session.status === "authenticated" ? (<div
+              id="profile"
+              className="px-6 py-6 bg-indigo-950 mt-2 mb-4 mx-2 rounded-lg"
+            >
+              <p className="text-white">Welcome,</p>
+              <div href="#" className="inline-flex w-full space-x-3 mt-2 items-center">
+                <span>
+                  <img
+                    className="rounded-full w-8 h-8"
+                    src="https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=128&q=80"
+                    alt=""
+                  />
                 </span>
-                <Logout />
-                </p>
-                
-                <span className="text-xs  block text-slate-400 capitalize">{session.data.user.role}</span>
+                <div className="w-full">
+                  <p className="flex items-center justify-between w-full">
+                    <span className="text-sm md:text-base font-bold capitalize">
+                      {session.data.user.name}
+                    </span>
+                    <Logout />
+                  </p>
+
+                  <span className="text-xs  block text-slate-400 capitalize">{session.data.user.role}</span>
+                </div>
               </div>
-            </div>
-          </div> ) :( <div className="px-6 flex items-center justify-center py-6 bg-indigo-950 mt-2 mb-4 mx-2 rounded-lg">
-            <Link href={'/login'} className="font-bold text-lg text-white ">Login/Sign</Link>
-          </div> )
-        }
-         
-         <Navlinks />
+            </div>) : (<div className="px-6 flex items-center justify-center py-6 bg-indigo-950 mt-2 mb-4 mx-2 rounded-lg">
+              <Link href={'/login'} className="font-bold text-lg text-white ">Login/Sign</Link>
+            </div>)
+          }
+
+          <Navlinks />
         </div>
         {/* Movbile Sidebar */}
         {/* <div className="flex md:hidden ">

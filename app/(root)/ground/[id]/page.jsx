@@ -8,13 +8,22 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getGroundtBookingDetails } from '@/lib/database/actions/ground.actions';
 import { Button } from '@/components/ui/button';
-
+import BookGround from '@/components/shared/BookGround';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import GroundtBookingDetails from '@/components/shared/GrounBookingDetails'
+import { getGroundtBookingDetails } from '@/lib/database/actions/ground.actions';
+import { redirect } from 'next/navigation';
 const page = async ({ params: { id } }) => {
-  const groundData = await getGroundtBookingDetails(id);
-  console.log(groundData);
 
+  const session = await getServerSession(authOptions)
+  if (!session) {
+    redirect('/')
+  }
+  const userId = session.user.id.toString();
+
+  const groundData = await getGroundtBookingDetails(id);
   const formatTime = (time) => {
     const hour = parseInt(time.split(':')[0]);
     const minute = time.split(':')[1];
@@ -44,14 +53,19 @@ const page = async ({ params: { id } }) => {
                 : "bg-red-50 text-red-600"}  `}>{slot.status}</TableCell>
               <TableCell className="text-center">
                 {
-                  slot.status === 'Available' ? (<Button className="py-0 px-6 text-sm">book</Button>
-                  ) : (<Button className="py-0 px-6 text-sm" disabled>book</Button>)
+                  slot.status === 'Available' ?
+                    (<BookGround bookerId={userId} groundId={id} slotNumber={slot.slotNumber} />)
+                    :
+                    (session.user.role === 'admin' ? <GroundtBookingDetails bookingData={slot.bookings} groundId={id} slotNumber={slot.slotNumber} /> : <Button className="py-0 px-6 text-sm" disabled>booked
+                      {/* {slot.bookings && slot.bookings.bookerId.username} */}
+                    </Button>)
                 }
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
+
     </div>
   );
 };

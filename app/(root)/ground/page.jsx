@@ -18,10 +18,7 @@ const page = async () => {
   if (!session) {
     redirect('/')
   }
-
   const grounds = await getGrounds();
-  // console.log(grounds);
-  const userId = session.user.id.toString();
 
   return (
     <div className='wrapper flex flex-col items-start justify-start w-full h-full  overscroll-y-scroll '>
@@ -35,11 +32,11 @@ const page = async () => {
         Sports grounds
       </h2>
       {
-        grounds.length === 0 && (<p className=' flex items-center justify-center w-full pb-5 text-primary font-semibold '>No Playgrounds Added</p>)
+        grounds.length && grounds.length === 0 && (<p className=' flex items-center justify-center w-full pb-5 text-primary font-semibold '>No Playgrounds Added</p>)
       }
       <div className=' grid w-full grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:gap-6 '>
         {
-          grounds.map((ground) => {
+          grounds.length && grounds.map((ground) => {
             let availableSlots = 0;
             let bookedSlots = 0;
 
@@ -76,13 +73,12 @@ const page = async () => {
 
 
                 </div>
-                {
-                  session.user.role === "admin" ? (
-                    <Link href={`/ground/${ground._id}`} className="mt-4 bg-primary px-4 py-2 text-sm rounded-md text-white" varient="sm">Check Bookings</Link>
-                  ) : (
-                    <BookEquipment bookerId={userId} groundId={ground._id} />
-                  )
-                }
+
+                <Link href={`/ground/${ground._id}`} className="mt-4 bg-primary px-4 py-2 text-sm rounded-md text-white" varient="sm">
+                  {
+                    session.user.role === 'admin' ? 'Check Bookings' : 'Book slot'
+                  }
+                </Link>
               </div>)
           })
         }
