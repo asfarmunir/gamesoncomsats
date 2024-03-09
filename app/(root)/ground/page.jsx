@@ -6,7 +6,6 @@ import React from 'react'
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { getServerSession } from "next-auth";
 import { redirect } from 'next/navigation'
-import BookEquipment from '@/components/shared/BookEquipment'
 import Link from 'next/link'
 import { getGrounds } from '@/lib/database/actions/ground.actions'
 

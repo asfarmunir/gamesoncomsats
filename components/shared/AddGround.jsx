@@ -21,7 +21,7 @@ import { ColorRing } from "react-loader-spinner";
 import { useRouter } from "next/navigation";
 import { addGround } from '@/lib/database/actions/ground.actions';
 
-const AddEquiment = () => {
+const AddGround = () => {
 
   const [validation, setValidation] = useState("");
   const [loading, setLoading] = useState(false);
@@ -175,4 +175,4 @@ const AddEquiment = () => {
   )
 }
 
-export default AddEquiment
+export default AddGround
