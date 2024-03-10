@@ -5,7 +5,7 @@ import Logout from "./Logout";
 import Link from "next/link";
 import Navlinks from "./Navlinks";
 import { useSession } from "next-auth/react";
-
+import Image from "next/image";
 const Sidebar = () => {
 
   // const session = await getServerSession(authOptions)
@@ -36,8 +36,10 @@ const Sidebar = () => {
               <p className="text-white">Welcome,</p>
               <div href="#" className="inline-flex w-full space-x-3 mt-2 items-center">
                 <span>
-                  <img
+                  <Image
                     className="rounded-full w-8 h-8"
+                    width={24}
+                    height={24}
                     src="https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=128&q=80"
                     alt=""
                   />
@@ -92,7 +94,7 @@ const Sidebar = () => {
               <p className="text-white">Welcome back,</p>
               <a href="#" className="inline-flex space-x-3 mt-2 items-center">
                 <span>
-                  <img
+                  <Image
                     className="rounded-full w-8 h-8"
                     src="https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=128&q=80"
                     alt=""

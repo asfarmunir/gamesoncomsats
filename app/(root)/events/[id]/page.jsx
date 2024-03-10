@@ -10,7 +10,7 @@ const Page = ({ params: { id } }) => {
             </h2>
             <div className='text-start'>
                 <p className="mb-4 font-semibold text-slate-500">
-                    Welcome to our team registration page! We're excited to have you onboard. Please fill out the form below to register your team.
+                    Welcome to our team registration page! Were excited to have you onboard. Please fill out the form below to register your team.
                 </p>
                 <p className="mb-4 font-bold text-slate-600">
                     By registering your team, you agree to abide by the following Terms and Conditions:
@@ -29,7 +29,7 @@ const Page = ({ params: { id } }) => {
                         The decisions of the judges are final and binding.</li>
                 </ul>
                 <p className="mb-4">
-                    If you have any questions or concerns, please don't hesitate to <a href="#" className="text-primary hover:underline">contact us</a>.
+                    If you have any questions or concerns, please dont hesitate to <p className="text-primary hover:underline">contact us</p>.
                 </p>
             </div >
             <AddTeam eventId={id} />
