@@ -4,11 +4,10 @@ import { LuLogOut } from 'react-icons/lu'
 import { signOut } from 'next-auth/react'
 import { toast } from 'react-hot-toast'
 import { useRouter } from 'next/navigation'
-const Logout = () => {
 
+const Logout = () => {
   const router = useRouter();
-  const logoutUser = async () => {
-    // await signOut();
+  const logoutUser = () => {
     toast.promise(signOut({ redirect: false, callbackUrl: "/" }),
       {
         success: "logged Out",

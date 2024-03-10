@@ -19,7 +19,6 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { ColorRing } from "react-loader-spinner";
 import { useRouter } from "next/navigation";
-import { addGround } from '@/lib/database/actions/ground.actions';
 import { createEvent } from '@/lib/database/actions/event.actions';
 
 const AddEvent = () => {
