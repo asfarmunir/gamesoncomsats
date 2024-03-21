@@ -13,7 +13,7 @@ const Sidebar = () => {
   // console.log(session);
   return (
     <div>
-      <div className="bg-slate-200 flex   h-screen antialiased text-slate-300 selection:bg-blue-600 selection:text-white">
+      <div className="bg-slate-200 flex h-screen antialiased text-slate-300 selection:bg-blue-600 selection:text-white">
         {/* SideBar */}
         <div
           id="menu"
