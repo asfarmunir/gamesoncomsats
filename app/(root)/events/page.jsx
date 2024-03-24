@@ -12,7 +12,7 @@ const page = async () => {
 
     const session = await getServerSession(authOptions)
     if (!session) {
-        redirect('/')
+        redirect('/login')
     }
 
     const events = await getAllEvents();

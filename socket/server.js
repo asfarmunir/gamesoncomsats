@@ -87,4 +87,9 @@ io.on("connection", (socket) => {
         console.log(cricketData);
         io.emit('cricketScore', cricketData)
     })
+
+    socket.on('matchFinish', (winningTeam) => {
+        console.log('match Finished with team win of', winningTeam);
+        io.emit('matchFinish', winningTeam)
+    })
 })

@@ -12,30 +12,15 @@ import Link from "next/link";
 
 
 const Navlinks = () => {
-
   const adminLinks = [
     { text: "Home", description: "Sports portal", icon: <MdDashboard />, href: "/" },
-    { text: "Inventory", description: "Manage equipments", icon: <GiDatabase />, href: "/inventory" },
-    {
-      text: "Events",
-      description: "Manage events",
-      icon: <MdEmojiEvents />,
-      href: "/events"
-    },
-    {
-      text: "Playrounds",
-      description: "Book grounds",
-      icon: <BiSolidCricketBall />,
-      href: "/ground"
-    },
-    {
-      text: "Fixtures",
-      description: "score card and results",
-      icon: <SiSecurityscorecard />,
-      href: "/livescore"
-    },
-
+    { text: "Equipments", description: "book equipments", icon: <GiDatabase />, href: "/inventory" },
+    { text: "Events", description: "Check events", icon: <MdEmojiEvents />, href: "/events" },
+    { text: "Playgrounds", description: "Book grounds", icon: <BiSolidCricketBall />, href: "/ground" },
+    { text: "LiveScore", description: "Score card and results", icon: <SiSecurityscorecard />, href: "/livescore" },
   ];
+
+
 
   const pathname = usePathname();
 

@@ -67,7 +67,7 @@ const AddGround = () => {
       <Form {...form}>
         <div
           id="first"
-          className="flex flex-col items-center bg-white shadow-md w-[24rem] sm:w-[24rem]  rounded-xl px-8 pt-6 pb-8 mb-4 space-y-6"
+          className="flex flex-col items-center bg-white w-[24rem] sm:w-[24rem]  rounded-xl px-8 pt-6 pb-8 mb-4 space-y-6"
         >
           <h1 className='text-2xl font-bold'>
             Add Playground

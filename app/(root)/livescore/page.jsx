@@ -1,14 +1,5 @@
 "use client"
-import { useState, useEffect } from 'react'
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { HiSelector } from "react-icons/hi";
+import { useState } from 'react'
 import {
     Select,
     SelectContent,
@@ -20,25 +11,36 @@ import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import FootballScorecard from '@/components/shared/FootballScorecard';
-import { io } from 'socket.io-client';
 import CricketScorecard from '@/components/shared/CricketScorecard';
 import { socket } from '@/lib/AuthSession';
-import BasketballScorecard from '@/components/shared/BasketballScorecard';
 import { toast } from 'react-hot-toast';
-
-
+import { startMatch } from '@/lib/database/actions/match.actions';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 const page = () => {
 
+    const session = useSession();
+    const router = useRouter();
+    if (session.status !== 'authenticated') {
+        router.push('/login');
+    }
     const [sportsType, setSportsType] = useState('');
     const [firstTeam, setFirstTeam] = useState('')
     const [secondTeam, setSecondTeam] = useState('')
     const [matchStarted, setMatchStarted] = useState(false)
+    const [matchId, setMatchId] = useState('')
 
 
 
     socket.on('matchStart', () => {
         console.log('match started');
     })
+
+    socket.on('matchFinish', () => {
+        console.log('match finished');
+    })
+
+
 
     return (
         <div className='flex flex-col items-center justify-center m-2 p-4'>
@@ -96,14 +98,37 @@ const page = () => {
                             <Button disabled onClick={() => setMatchStarted(true)} className="mt-6 rounded-lg">Start Scorecard
                             </Button>
                         ) : (
-                            <Button onClick={() => {
-                                toast.success('match started')
+                            <Button onClick={async () => {
+                                const matchData = await startMatch(
+                                    {
+                                        isFinished: false,
+                                        teamA: firstTeam,
+                                        teamB: secondTeam,
+                                        sportsType,
+                                        teamAGoal: 0,
+                                        teamBGoals: 0,
+                                        teamAScoreData: {
+                                            score: 0,
+                                            wickets: 0,
+                                            overs: 0,
+                                        },
+                                        teamBScoreData: {
+                                            score: 0,
+                                            wickets: 0,
+                                            overs: 0,
+                                        }
+                                    }
+                                );
+                                setMatchId(matchData._id)
                                 socket.emit('matchStart',
                                     {
                                         sportsType,
                                         team1: firstTeam,
-                                        team2: secondTeam
+                                        team2: secondTeam,
+
                                     })
+                                toast.success('match started')
+
                                 setMatchStarted(true)
                             }} className="mt-6 rounded-lg">Start Scorecard
                             </Button>
@@ -119,21 +144,19 @@ const page = () => {
 
             {
                 matchStarted && sportsType === 'football' && (
-                    <FootballScorecard sportsType={"football"} teamA={firstTeam} teamB={secondTeam} />
+                    <FootballScorecard sportsType={"football"} teamA={firstTeam} teamB={secondTeam} matchId={matchId} />
                 )
             }
             {
                 matchStarted && sportsType === 'basketball' && (
-                    <FootballScorecard sportsType={"basketball"} teamA={firstTeam} teamB={secondTeam} />
+                    <FootballScorecard sportsType={"basketball"} teamA={firstTeam} teamB={secondTeam} matchId={matchId} />
                 )
             }
             {
                 matchStarted && sportsType === 'cricket' && (
-                    <CricketScorecard teamA={firstTeam} teamB={secondTeam} />
+                    <CricketScorecard teamA={firstTeam} teamB={secondTeam} matchId={matchId} />
                 )
             }
-            {/* <FootballScorecard teamA={firstTeam} teamB={secondTeam} /> */}
-            {/* <BasketballScorecard teamA={firstTeam} teamB={secondTeam} /> */}
         </div>
     )
 }

@@ -3,30 +3,27 @@
 import { useState, useEffect } from 'react'
 import { CgMediaLive } from "react-icons/cg";
 import { socket } from '@/lib/AuthSession';
+import { useRouter } from 'next/navigation';
 
-const LiveScore = () => {
+const LiveScore = ({ matchData }) => {
 
+    const router = useRouter();
 
-    const [isMatchStarted, setIsMatchStarted] = useState(false)
-    const [sportsType, setSportsType] = useState('football')
-    const [teamA, setTeamA] = useState('')
-    const [teamB, setTeamB] = useState('')
-    const [team1Goals, setTeam1Goals] = useState(0)
-    const [team2Goals, setTeam2Goals] = useState(0)
-    const [teamAScore, setTeamAScore] = useState(0);
-    const [teamAWickets, setTeamAWickets] = useState(0);
-    const [teamBScore, setTeamBScore] = useState(0);
-    const [teamBWickets, setTeamBWickets] = useState(0);
-    const [overs, SetOvers] = useState(0)
+    const [isMatchStarted, setIsMatchStarted] = useState(true)
+    const [isFinished, setIsFinished] = useState(false);
+    const [winnigTeam, setwinnigTeam] = useState('')
+    const [sportsType, setSportsType] = useState(matchData.sportsType)
+    const [teamA, setTeamA] = useState(matchData.teamA)
+    const [teamB, setTeamB] = useState(matchData.teamB)
+    const [team1Goals, setTeam1Goals] = useState(matchData.teamAGoal)
+    const [team2Goals, setTeam2Goals] = useState(matchData.teamBGoals || 0)
+    const [teamAScore, setTeamAScore] = useState(matchData.teamAScoreData.score);
+    const [teamAWickets, setTeamAWickets] = useState(matchData.teamAScoreData.wickets);
+    const [teamBScore, setTeamBScore] = useState(matchData.teamBScoreData.score);
+    const [teamBWickets, setTeamBWickets] = useState(matchData.teamBScoreData.wickets);
+    const [overs, SetOvers] = useState(matchData.teamAScoreData.overs)
     useEffect(() => {
         socketInitializer();
-
-        // socket.on('matchStart', (teams) => {
-        //     console.log('match started', teams);
-        //     setTeamA(teams.team1)
-        //     setTeamB(teams.team2)
-        //     setIsMatchStarted(true)
-        // })
 
         socket.on('footballScore', (goals) => {
             console.log('goals', goals);
@@ -50,13 +47,13 @@ const LiveScore = () => {
 
     const socketInitializer = () => {
 
-        socket.on('matchStart', (teams) => {
-            console.log('match started', teams);
-            setSportsType(teams.sportsType)
-            setTeamA(teams.team1)
-            setTeamB(teams.team2)
-            setIsMatchStarted(true)
-        })
+        // socket.on('matchStart', (teams) => {
+        //     console.log('match started', teams);
+        //     setSportsType(teams.sportsType)
+        //     setTeamA(teams.team1)
+        //     setTeamB(teams.team2)
+        //     setIsMatchStarted(true)
+        // })
         // socket.on('teams', (teams) => {
         //     console.log("emitted teams", teams);
         //     setTeamA(teams.team1)
@@ -67,6 +64,14 @@ const LiveScore = () => {
         // })
 
     }
+
+    socket.on('matchFinish', (team) => {
+        setIsFinished(true)
+        setwinnigTeam(team)
+        console.log(team);
+
+    })
+
 
     const today = new Date();
     const year = today.getFullYear();
@@ -150,7 +155,25 @@ const LiveScore = () => {
                         )
                     }
 
-                    <p className=' w-full text-center text-sm font-thin text-slate-500 mb-5'>score is being managed by the umpires in realtime</p>
+                    {
+                        isFinished ? (
+
+                            winnigTeam === 'tied' ? (
+                                <p className=' w-full text-center italic text-sm font-thin text-slate-500 mb-5'>
+                                    Match Tied
+                                </p>
+                            ) : (
+                                <p className=' w-full text-center italic text-sm font-thin text-slate-500 mb-5'>
+                                    <span className='font-bold text-lg capitalize mr-1 text-primary-500'> {winnigTeam}</span>     won the match
+                                </p>
+                            )
+
+
+                        ) : (
+                            <p className=' w-full text-center text-sm font-thin text-slate-500 mb-5'>score is being managed by the umpires in realtime</p>
+                        )
+                    }
+
                 </div>
 
             </div>) : (

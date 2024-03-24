@@ -3,9 +3,19 @@ import { FaMinus, FaPlus } from "react-icons/fa";
 import { Button } from '../ui/button';
 import io from 'socket.io-client';
 import { socket } from '@/lib/AuthSession';
+import { finishMatch } from '@/lib/database/actions/match.actions';
+import { useRouter } from 'next/navigation';
+import { toast } from 'react-hot-toast';
+import { updateScores } from '@/lib/database/actions/match.actions';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 
-const CricketScorecard = ({ teamA, teamB }) => {
-
+const CricketScorecard = ({ teamA, teamB, matchId }) => {
 
     const [teamAScore, setTeamAScore] = useState(0);
     const [teamAWickets, setTeamAWickets] = useState(0);
@@ -15,6 +25,9 @@ const CricketScorecard = ({ teamA, teamB }) => {
     const [currentTeamOver, setCurrentTeamOver] = useState(0);
     const [currentTeamBalls, setCurrentTeamBalls] = useState(0);
     const [extraScore, setExtraScore] = useState(0);
+    const [isFinished, setIsFinished] = useState(false);
+    const [winningTeam, setWinningTeam] = useState('')
+
 
     const [teamsData, setTeamsData] = useState({
         team1: {
@@ -48,6 +61,7 @@ const CricketScorecard = ({ teamA, teamB }) => {
                 overs: currentTeamOver + currentTeamBalls / 10, // Update overs
             },
         });
+
     }, [teamAScore, teamAWickets, teamBScore, teamBWickets, currentTeamOver, currentTeamBalls]);
 
     const handleRuns = (runs) => {
@@ -93,6 +107,7 @@ const CricketScorecard = ({ teamA, teamB }) => {
         setCurrentTeam(currentTeam === teamA ? teamB : teamA);
         setCurrentTeamOver(0);
         setCurrentTeamBalls(0);
+        toast.success('team turn switched')
     };
 
     const handleExtraScore = (extra) => {
@@ -103,14 +118,22 @@ const CricketScorecard = ({ teamA, teamB }) => {
         }
     };
 
+    const updateScoresOfTeams = async (id, data) => {
+        console.log('hehe', data);
+        await updateScores(id, data);
+    }
+
+    updateScoresOfTeams(matchId, teamsData);
+
     socket.emit('cricketScore', teamsData);
+
 
     return (
         <div className='bg-white w-full p-4 m-3 rounded-lg flex flex-col items-center justify-center'>
             <h2 className='text-3xl my-4 font-bold capitalize'>
                 Cricket Match
             </h2>
-            <h3 className="text-xl font-semibold mb-2">{currentTeam} Batting</h3>
+            <h3 className="text-xl font-semibold mb-2 bg-blue-50 px-8 rounded-full italic text-primary py-0.5">{currentTeam} Batting</h3>
             <div className="flex flex-wrap max-w-xl items-center justify-center mt-3 gap-4 mb-6">
                 <Button onClick={() => handleRuns(1)}><FaPlus className='mr-2' /> 1 Run</Button>
                 <Button onClick={() => handleRuns(2)}><FaPlus className='mr-2' /> 2 Runs</Button>
@@ -136,7 +159,41 @@ const CricketScorecard = ({ teamA, teamB }) => {
                         onClick={() => resetScores(teamB)}>Reset score</button>
                 </div>
             </div>
-            <Button className='mt-6 mb-4 px-4 rounded-full' onClick={handleSwitchTeam}>Switch Teams</Button>
+            {
+                !isFinished && (
+                    <Select onValueChange={(v) => setWinningTeam(v)}>
+                        <SelectTrigger className=" w-64 mt-8 bg-white  rounded-md px-8 py-2 font-semibold text-sm focus:outline-slate-50 inline-flex items-center gap-2">
+                            <SelectValue placeholder="Select winning team" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value={teamA}>{teamA}</SelectItem>
+                            <SelectItem value={teamB}>{teamB}</SelectItem>
+                            <SelectItem value="tied">Match Tied</SelectItem>
+                        </SelectContent>
+                    </Select>
+                )
+            }
+
+            {
+                isFinished ? (
+                    <p className='text-slate-500 my-6 font-light italic text-sm'>
+                        Match Finished
+                    </p>
+                ) : (
+                    <div className='flex flex-col md:flex-row gap-4 items-center justify-center'>
+
+                        <Button className='mt-6 mb-4 px-4 rounded-full' onClick={handleSwitchTeam}>Switch Teams</Button>
+                        <Button className='mt-6 mb-4 px-4 rounded-full' disabled={winningTeam === ''} onClick={async () => {
+                            await finishMatch(matchId, winningTeam)
+                            socket.emit('matchFinish', winningTeam)
+                            toast.success('Results saved')
+                            setIsFinished(true);
+                        }}>Save Results</Button>
+                    </div>
+                )
+            }
+
+
         </div>
     );
 };

@@ -44,18 +44,17 @@ const formSchema = z.object({
 })
 
 export default function ProfileForm() {
-  // ...
 
   const router = useRouter();
 
   const session = useSession();
   console.log(session)
-  if (session.status === "authenticated") {
-    router.push("/");
-  }
+  // if (session.status === "authenticated") {
+  //   router.push("/");
+  // }
   const [emailValidation, setEmailValidation] = useState("");
   const [loading, setLoading] = useState(false);
-  const [userRole, setUserRole]= useState('student')
+  const [userRole, setUserRole] = useState('student')
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -63,7 +62,7 @@ export default function ProfileForm() {
       username: "asfar",
       email: "asfarma2815@gmail.com",
       password: "asfarasfar",
-      role:"student"
+      role: "student"
     },
   });
 
@@ -78,7 +77,7 @@ export default function ProfileForm() {
         username,
         email,
         password,
-        role:userRole,
+        role: userRole,
       }),
       headers: {
         "Content-type": "application/json",
@@ -92,6 +91,8 @@ export default function ProfileForm() {
         redirect: false,
       });
       toast.success("Signup successful!");
+      router.push('/');
+
     }
     const data = await response.json();
     setLoading(false);
@@ -112,20 +113,9 @@ export default function ProfileForm() {
           className="flex flex-col items-center bg-white shadow-md w-[18rem] sm:w-[24rem]  rounded-xl px-8 pt-6 pb-8 mb-2 space-y-6"
         >
 
-          <Button
-            onClick={async () => {
-              try {
-                await signIn("google", { callbackUrl: "/" });
-                toast.success("Login successful!", { duration: 7000 });
-              } catch (error) {
-                console.error("Login error:", error);
-              }
-            }}
-            className="m-0 w-full text-start bg-white border hover:text-white shadow-sm border-primary-500 text-primary font-semibold"
-          >
-            <FcGoogle className=" w-7 h-7 mr-1 " />
-            Continue with google
-          </Button>
+          <h2 className="text-2xl font-bold text-primary">
+            Games on Comsats
+          </h2>
           <Separator />
           <form
             id="container"
@@ -187,24 +177,24 @@ export default function ProfileForm() {
                     />
                   </FormControl>
                   <FormMessage />
-                 
+
                 </FormItem>
               )}
             />
             <p className="font-bold ml-1 mb-1 text-sm">Role</p>
-            <Select onValueChange={(value)=>setUserRole(value)}> 
-                      <SelectTrigger className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                        <SelectValue placeholder="Stundent"/>
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="coach">Coach</SelectItem>
-                        <SelectItem value="player">Player</SelectItem>
-                        <SelectItem value="student">Student</SelectItem>
-                      </SelectContent>
-                    </Select>
-             <p className="text-sm text-red-500 mt-4 font-semibold">
-                    {emailValidation}
-                  </p>
+            <Select onValueChange={(value) => setUserRole(value)}>
+              <SelectTrigger className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                <SelectValue placeholder="Stundent" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="coach">Coach</SelectItem>
+                <SelectItem value="player">Player</SelectItem>
+                <SelectItem value="student">Student</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-sm text-red-500 mt-4 font-semibold">
+              {emailValidation}
+            </p>
             <div className="flex flex-col w-full items-center justify-center">
               <Button
                 type="submit"

@@ -41,10 +41,7 @@ export default function ProfileForm() {
   const router = useRouter();
 
   const session = useSession();
-
-  if (session.status === "authenticated") {
-    router.push("/");
-  }
+  console.log(session);
 
   const [validation, setValidation] = useState("");
   const [loading, setLoading] = useState(false);
@@ -68,8 +65,11 @@ export default function ProfileForm() {
       redirect: false,
     });
     setLoading(false);
+    console.log(response);
     if (response?.ok) {
+
       toast.success("Login successful!");
+      router.push("/");
     }
     if (response?.error) {
       setValidation(response.error);
@@ -89,7 +89,9 @@ export default function ProfileForm() {
           id="first"
           className="flex flex-col items-center bg-white shadow-md w-[18rem] sm:w-[24rem]  rounded-xl px-8 pt-6 pb-8 mb-4 space-y-6"
         >
-         
+          <h2 className="text-2xl font-bold text-primary">
+            Games on Comsats
+          </h2>
           <Separator />
           <form
             id="container"

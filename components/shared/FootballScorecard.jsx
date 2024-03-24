@@ -5,53 +5,34 @@ import { IoMdAdd } from "react-icons/io";
 import { FaMinus, FaPlus } from "react-icons/fa";
 import { Button } from '../ui/button';
 import { socket } from '@/lib/AuthSession';
-
-
-const FootballScorecard = ({ sportsType, teamA, teamB }) => {
+import { updateGoals, finishMatch } from '@/lib/database/actions/match.actions';
+import { useRouter } from 'next/navigation';
+import { toast } from 'react-hot-toast';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+const FootballScorecard = ({ sportsType, teamA, teamB, matchId }) => {
 
     const [team1Goals, setTeam1Goals] = useState(0)
     const [team2Goals, setTeam2Goals] = useState(0)
+    const [isFinished, setIsFinished] = useState(false);
+    const [winningTeam, setWinningTeam] = useState('')
+    const router = useRouter();
 
-    // let socket = io("http://localhost:5000");
-
-    // let teams = {
-    //     team1: teamA,
-    //     team2: teamB
-    // }
-    // useEffect(() => {
-    //     socketInitializer();
-    //     // return () => {
-    //     //     socket.disconnect();
-    //     // };
-    // }, []);
-
-    // const socketInitializer = () => {
-
-    //     // socket.emit("teams", teams);
-    //     socket.on("connected", () => setSocketConnected(true));
-    //     console.log(socketConnected);
-    //     socket.on('teams', (teams) => {
-    //         console.log("emitted teams", teams);
-    //     })
-
+    // if (isFinished) {
+    //     toast.success('Results saved!')
+    //     router.push('/')
     // }
 
-    // function handleSubmit(e) {
-    //     e.preventDefault();
-
-    //     console.log("emitted");
-    //     console.log(score);
-
-    //     socket.emit('scoring', score)
-
-    // }
-    // console.log(socketConnected);
-
-    // date
     const today = new Date();
     const year = today.getFullYear();
     const month = today.getMonth() + 1; // Month is zero-indexed, so add 1
     const day = today.getDate();
+
 
 
     return (
@@ -77,25 +58,28 @@ const FootballScorecard = ({ sportsType, teamA, teamB }) => {
                         {teamA}
                     </h2>
                     <div className='flex text-sm md:text-lg items-center justify-center gap-4 mt-4'>
-                        <button className=' bg-slate-100/80 hover:bg-slate-200/70 p-1' onClick={() => {
+                        <button className=' bg-slate-100/80 hover:bg-slate-200/70 p-1' onClick={async () => {
 
                             setTeam1Goals(team1Goals - 1)
-                            socket.emit('footballScore', {
-                                'team1goals': team1Goals - 1,
-                                'team2goals': team2Goals,
-                            })
+                            let goals = {
+                                team1goals: team1Goals - 1,
+                                team2goals: team2Goals,
+                            }
+                            await updateGoals(matchId, goals)
+                            socket.emit('footballScore', goals)
 
                         }} disabled={team1Goals === 0}><FaMinus /></button>
                         <span>{team1Goals}</span>
-                        <button className=' bg-slate-100/80 hover:bg-slate-200/70 p-1' onClick={() => {
+                        <button className=' bg-slate-100/80 hover:bg-slate-200/70 p-1' onClick={async () => {
 
                             setTeam1Goals(team1Goals + 1)
                             let goals = {
-                                'team1goals': team1Goals + 1,
-                                'team2goals': team2Goals,
+                                team1goals: team1Goals + 1,
+                                team2goals: team2Goals,
                             }
+                            await updateGoals(matchId, goals)
                             socket.emit('footballScore', goals)
-                        }} disabled={team1Goals === 10}><FaPlus /></button>
+                        }} ><FaPlus /></button>
                     </div>
                     <p className='text-xs font-thin text-slate-500 mt-3'>
                         {
@@ -110,30 +94,34 @@ const FootballScorecard = ({ sportsType, teamA, teamB }) => {
                     <div className='flex text-sm md:text-lg items-center justify-center gap-4 mt-4'>
                         <button className=' bg-slate-100/80 hover:bg-slate-200/70 p-1'
 
-                            onClick={() => {
+                            onClick={async () => {
 
                                 setTeam2Goals(team2Goals - 1)
-                                socket.emit('footballScore', {
-                                    'team1goals': team1Goals,
-                                    'team2goals': team2Goals - 1,
-                                })
+                                let goals = {
+                                    team1goals: team1Goals,
+                                    team2goals: team2Goals - 1,
+                                }
+                                await updateGoals(matchId, goals)
+                                socket.emit('footballScore', goals)
 
                             }}
                             disabled={team2Goals === 0}><FaMinus /></button>
                         <span>{team2Goals}</span>
                         <button className=' bg-slate-100/80 hover:bg-slate-200/70 p-1'
 
-                            onClick={() => {
+                            onClick={async () => {
 
                                 setTeam2Goals(team2Goals + 1)
-                                socket.emit('footballScore', {
-                                    'team1goals': team1Goals,
-                                    'team2goals': team2Goals + 1,
-                                })
+                                let goals = {
+                                    team1goals: team1Goals,
+                                    team2goals: team2Goals + 1,
+                                }
+                                await updateGoals(matchId, goals)
+                                socket.emit('footballScore', goals)
 
                             }}
 
-                            disabled={team2Goals === 10}><FaPlus /></button>
+                        ><FaPlus /></button>
                     </div>
                     <p className='text-xs font-thin text-slate-500 mt-3'>
                         {
@@ -143,7 +131,34 @@ const FootballScorecard = ({ sportsType, teamA, teamB }) => {
                     </p>
                 </div>
             </div>
-            <Button className='mt-6 mb-4 px-4 rounded-full'>Save Results</Button>
+            {
+                !isFinished && (
+                    <Select onValueChange={(v) => setWinningTeam(v)}>
+                        <SelectTrigger className=" w-64 mt-8 bg-white  rounded-md px-8 py-2 font-semibold text-sm focus:outline-slate-50 inline-flex items-center gap-2">
+                            <SelectValue placeholder="Select winning team" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value={teamA}>{teamA}</SelectItem>
+                            <SelectItem value={teamB}>{teamB}</SelectItem>
+                            <SelectItem value="tied">Match Tied</SelectItem>
+                        </SelectContent>
+                    </Select>
+                )
+            }
+
+            {
+                isFinished ? (
+                    <p className='text-slate-500 my-6 font-light italic text-sm'>
+                        Match Finished
+                    </p>
+                ) : (<Button className='mt-6 mb-4 px-4 rounded-full' disabled={winningTeam === ''} onClick={async () => {
+                    await finishMatch(matchId, winningTeam)
+                    socket.emit('matchFinish', winningTeam)
+                    toast.success('Results saved')
+                    setIsFinished(true);
+                }}>Save Results</Button>)
+            }
+
         </div>
     )
 }

@@ -8,14 +8,25 @@ import { getServerSession } from "next-auth";
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { getGrounds } from '@/lib/database/actions/ground.actions'
-
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { MdAdd } from 'react-icons/md'
 
 const page = async () => {
 
 
   const session = await getServerSession(authOptions)
   if (!session) {
-    redirect('/')
+    redirect('/login')
   }
   const grounds = await getGrounds();
 
@@ -24,16 +35,32 @@ const page = async () => {
 
       {
         session.user && session.user.role === "admin" &&
-        <AddGround />
+        <div className='flex items-center justify-between w-full py-2 '>
+
+          <h2 className='text-2xl font-bold text-primary-500'>Playgrounds  Dashboard</h2>
+          <AlertDialog>
+            <AlertDialogTrigger className=' py-2 inline-flex items-center text-sm mt-2 bg-primary px-4 rounded-md text-white'><MdAdd className='text-xl mr-1' />
+              Add Playground </AlertDialogTrigger>
+            <AlertDialogContent className="bg-white">
+              <AddGround />
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       }
 
-      <h2 className='font-bold text-3xl capitalize text-primary self-center mb-6 pb-2 px-4  shadow '>
-        Sports grounds
-      </h2>
+
+      {
+        session.user && session.user.role !== "admin" && <h2 className='font-bold text-3xl capitalize text-primary self-center pb-3 px-4 border-b   '>
+          Sports grounds
+        </h2>
+      }
       {
         grounds.length && grounds.length === 0 && (<p className=' flex items-center justify-center w-full pb-5 text-primary font-semibold '>No Playgrounds Added</p>)
       }
-      <div className=' grid w-full grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:gap-6 '>
+      <div className=' grid w-full grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:gap-6 mt-6 '>
         {
           grounds.length && grounds.map((ground) => {
             let availableSlots = 0;
